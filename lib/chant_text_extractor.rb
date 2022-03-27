@@ -24,7 +24,7 @@ class ChantTextExtractor
       doc
         .css('p.strong')
         .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant.$/i }
-        .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?) }
+        .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
 
     file_cols = [

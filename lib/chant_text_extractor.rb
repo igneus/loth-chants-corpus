@@ -28,6 +28,7 @@ class ChantTextExtractor
         .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant.$/i }
         .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
+        .collect {|i| ['A', i[0].scan(/\d/)[0], i[1]] }
 
     file_cols = [
       File.basename(file),

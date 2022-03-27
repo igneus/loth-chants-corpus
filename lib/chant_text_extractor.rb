@@ -1,16 +1,18 @@
 require 'csv'
+require 'yaml'
 
 require 'nokogiri'
 
 class ChantTextExtractor
   def self.call(dir)
+    untranslations = YAML.load File.read "untranslations/#{File.basename(dir)}.yml"
     Dir["#{dir}/*/*_*.htm"].each do |f|
       next if f.include? '/docs/'
-      process f
+      process f, untranslations
     end
   end
 
-  def self.process(file)
+  def self.process(file, untranslations)
     content = File.read file
     doc = Nokogiri::HTML(content)
 
@@ -30,7 +32,7 @@ class ChantTextExtractor
     file_cols = [
       File.basename(file),
       day,
-      hour,
+      untranslations['hours'][hour] || hour,
     ].collect do |s|
       # mainly remove line-breaks in feast titles
       s.gsub(/\s+/, ' ')

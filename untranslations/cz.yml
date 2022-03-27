@@ -1,0 +1,12 @@
+hours:
+  # hour codes mostly mimicking Cantus
+  Uvedení do první modlitby dne: I
+  Modlitba se čtením: OL
+  Ranní chvály: L
+  Modlitba dopoledne: T
+  Modlitba v poledne: S
+  Modlitba odpoledne: N
+  Nešpory: V
+  První nešpory: 1V
+  Druhé nešpory: 2V
+  Kompletář: C

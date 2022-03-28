@@ -14,12 +14,16 @@ class ChantTextExtractor
   end
 
   def self.process(file, untranslations)
+    basename = File.basename(file)
+    month = basename[2..3]
+    day = basename[4..5]
+
     content = File.read file
     doc = Nokogiri::HTML(content)
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|památka/ }
-    day = day_parts.reject(&is_rank).join('; ')
+    day_title = day_parts.reject(&is_rank).join('; ')
     hour = doc.css('p.center span.uppercase').first.text
     rank = day_parts.find(&is_rank)
 
@@ -35,8 +39,10 @@ class ChantTextExtractor
         .collect {|i| ['A', i[0].scan(/\d/)[0], i[1]] }
 
     file_cols = [
-      File.basename(file),
+      basename,
+      month,
       day,
+      day_title,
       rank,
       untranslations['hours'][hour] || hour,
     ].collect do |s|

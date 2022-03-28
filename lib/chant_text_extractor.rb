@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'csv'
 require 'yaml'
 
@@ -16,8 +17,11 @@ class ChantTextExtractor
     content = File.read file
     doc = Nokogiri::HTML(content)
 
-    day = doc.xpath('//h2[2]/span').collect(&:text).join('; ')
+    day_parts = doc.xpath('//h2[2]/span').collect(&:text)
+    is_rank = lambda {|x| x =~ /slavnost|svátek|památka/ }
+    day = day_parts.reject(&is_rank).join('; ')
     hour = doc.css('p.center span.uppercase').first.text
+    rank = day_parts.find(&is_rank)
 
     chants = []
 
@@ -33,10 +37,11 @@ class ChantTextExtractor
     file_cols = [
       File.basename(file),
       day,
+      rank,
       untranslations['hours'][hour] || hour,
     ].collect do |s|
       # mainly remove line-breaks in feast titles
-      s.gsub(/\s+/, ' ')
+      s&.gsub(/\s+/, ' ')
     end
 
     if chants.empty?

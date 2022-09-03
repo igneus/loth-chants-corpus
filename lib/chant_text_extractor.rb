@@ -29,6 +29,9 @@ class ChantTextExtractor
 
     chants = []
 
+    # Nokogiri translates &nbsp; to a Unicode non-breaking space, which we do not like
+    strip_nbsp = -> (x) { x&.gsub("\u00A0", ' ') }
+
     # antiphons
     chants +=
       doc
@@ -36,7 +39,7 @@ class ChantTextExtractor
         .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
         .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
-        .collect {|i| ['A', i[0].scan(/\d/)[0], i[1]] }
+        .collect {|i| ['A', i[0].scan(/\d/)[0], strip_nbsp.(i[1])] }
 
     # short responsories
     chants +=
@@ -44,7 +47,7 @@ class ChantTextExtractor
         .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
         .collect {|i| i.xpath("./p[@class='respV']") }
         .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
-        .collect {|i| ['Rb', nil, i] }
+        .collect {|i| ['Rb', nil, strip_nbsp.(i)] }
 
     file_cols = [
       basename,

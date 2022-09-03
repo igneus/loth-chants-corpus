@@ -12,6 +12,7 @@ but the scripts provide a reproducible way of building it from publicly availabl
 - checkout the code
 - `bundle install` to install required Ruby packages
 - `rake fetch` to fetch and unpack the packages used as input
+- `rake extract` to generate the corpus (prints CSV to stdout)
 
 ## TODO
 

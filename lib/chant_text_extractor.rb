@@ -38,6 +38,14 @@ class ChantTextExtractor
         .uniq {|i| i.last }
         .collect {|i| ['A', i[0].scan(/\d/)[0], i[1]] }
 
+    # short responsories
+    chants +=
+      doc
+        .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
+        .collect {|i| i.xpath("./p[@class='respV']") }
+        .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
+        .collect {|i| ['Rb', nil, i] }
+
     file_cols = [
       basename,
       month,

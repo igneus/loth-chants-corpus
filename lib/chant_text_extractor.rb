@@ -32,8 +32,8 @@ class ChantTextExtractor
     # antiphons
     chants +=
       doc
-        .css('p.strong')
-        .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant.$/i }
+        .xpath("//p[./span[@class='red']]")
+        .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
         .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
         .collect {|i| ['A', i[0].scan(/\d/)[0], i[1]] }

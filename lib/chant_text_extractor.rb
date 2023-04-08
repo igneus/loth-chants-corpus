@@ -68,6 +68,8 @@ class ChantTextExtractor
     chants.each do |c|
       puts CSV.generate_line(file_cols + c)
     end
+  rescue Errno::EPIPE
+    raise
   rescue => e
     STDERR.puts "Exception while processing #{file}:"
     raise

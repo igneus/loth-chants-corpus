@@ -21,7 +21,9 @@ filter = lambda do |row|
   expressions.all? {|e| b.eval e }
 end
 
-headers = CSV.parse_line ARGF.gets
+header = ARGF.gets
+puts header
+headers = CSV.parse_line header
 ARGF.each_line do |l|
   row = CSV.parse_line l, headers: headers
   print l if filter.(row)

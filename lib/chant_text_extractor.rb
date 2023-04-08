@@ -7,6 +7,19 @@ require 'nokogiri'
 class ChantTextExtractor
   def self.call(dir)
     untranslations = YAML.load File.read "untranslations/#{File.basename(dir)}.yml"
+
+    puts CSV.generate_line([
+      'basename',
+      'month',
+      'day',
+      'day_title',
+      'rank',
+      'hour',
+      'genre',
+      'position',
+      'text'
+    ])
+
     Dir["#{dir}/*/*_*.htm"].each do |f|
       next if f.include? '/docs/'
       process f, untranslations

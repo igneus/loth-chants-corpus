@@ -20,6 +20,7 @@ end
 desc 'extract chant texts from input data'
 task :extract do
   VERSIONS.each do |version|
-    sh 'bin/extract.rb', File.join(INPUT_DIR, version)
+    sh 'bin/extract.rb ' + File.join(INPUT_DIR, version) +
+       ' | bin/process.sh'
   end
 end

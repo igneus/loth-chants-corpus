@@ -1,8 +1,6 @@
 require 'date'
 require 'fileutils'
 
-require_relative 'lib/chant_text_extractor'
-
 VERSIONS = %w(cz) # %w(cz czop la)
 INPUT_DIR = 'input'
 YEAR = Date.today.year
@@ -22,6 +20,6 @@ end
 desc 'extract chant texts from input data'
 task :extract do
   VERSIONS.each do |version|
-    ChantTextExtractor.call File.join(INPUT_DIR, version)
+    sh 'bin/extract.rb', File.join(INPUT_DIR, version)
   end
 end

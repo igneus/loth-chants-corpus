@@ -52,7 +52,13 @@ class ChantTextExtractor
         .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
         .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
-        .collect {|i| ['A', i[0].scan(/\d/)[0], strip_nbsp.(i[1])] }
+        .collect do |i|
+      [
+        'A',
+        i[0].then {|label| strip_nbsp.(label) =~ /k(e kantiku)? (Panny Marie|Zachariášovu)/ ? 'E' : label.scan(/\d/)[0] },
+        strip_nbsp.(i[1])
+      ]
+    end
 
     # short responsories
     chants +=

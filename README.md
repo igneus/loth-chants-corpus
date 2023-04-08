@@ -7,6 +7,11 @@ Scripts extracting chant texts from the pre-generated HTML provided by
 The dataset itself probably cannot be published without copyright infringement,
 but the scripts provide a reproducible way of building it from publicly available sources.
 
+## Prerequisites
+
+- Ruby 3.x, Bundler
+- [csvkit](https://github.com/wireservice/csvkit)
+
 ## Usage
 
 - checkout the code

@@ -10,5 +10,9 @@ bin/csvfilter.rb -e 'day_title !~ /\(v.+?diecézi\)/' |
 
     bin/add_day_code.rb |
 
+    # keep only one occurrence of each psalter chant
+    bin/psalter_clean.rb |
+    bin/psalter_uniq.rb |
+
     # drop first column (filename)
     csvcut --not-columns basename

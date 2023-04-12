@@ -8,5 +8,7 @@ bin/csvfilter.rb -e 'day_title !~ /\(v.+?diecézi\)/' |
 
     bin/add_cycle_psalter_week.rb |
 
+    bin/add_day_code.rb |
+
     # drop first column (filename)
     csvcut --not-columns basename

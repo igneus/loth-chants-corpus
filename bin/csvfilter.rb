@@ -2,8 +2,9 @@
 
 # Filters CSV rows by a Ruby expression
 
-require 'csv'
 require 'optparse'
+
+require_relative '../lib/filter_rows'
 
 expressions = []
 OptionParser.new do |opts|
@@ -12,7 +13,8 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-filter = lambda do |row|
+FilterRows
+  .new do |row|
   b = binding
   row.to_h.each_pair do |k, v|
     b.local_variable_set k, v
@@ -20,11 +22,4 @@ filter = lambda do |row|
 
   expressions.all? {|e| b.eval e }
 end
-
-header = ARGF.gets
-puts header
-headers = CSV.parse_line header
-ARGF.each_line do |l|
-  row = CSV.parse_line l, headers: headers
-  print l if filter.(row)
-end
+  .run(ARGF)

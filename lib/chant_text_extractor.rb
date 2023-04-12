@@ -36,7 +36,7 @@ class ChantTextExtractor
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|památka/ }
-    day_title = day_parts.reject(&is_rank).join('; ')
+    day_title = day_parts.reject(&is_rank).join(';; ')
     hour = doc.css('p.center span.uppercase').first.text
     rank = day_parts.find(&is_rank)
 

@@ -27,4 +27,6 @@ cat $tmpfile |
     bin/false_flag_psalter_clean.rb $psalter_csv |
 
     # drop first column (filename)
-    csvcut --not-columns basename
+    csvcut --not-columns basename |
+
+    uniq

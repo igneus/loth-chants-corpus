@@ -16,7 +16,7 @@ AddColumns
   when Cycle::SANCTORALE
     ['sanctorale', row['month'], row['day']].join '.'
   when Cycle::PSALTER
-    ['psalter', row['psalter_week'], 'TODO:weekday'].join '.' # TODO
+    ['psalter', row['psalter_week'], Date.parse(row['date']).strftime('%A').downcase].join '.'
   else
     STDERR.puts row.inspect
     raise "unexpected cycle #{row['cycle']}"

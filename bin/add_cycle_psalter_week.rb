@@ -17,7 +17,7 @@ AddColumns
     else
       Cycle::PSALTER
     end
-  when /(^sv\.|panny marie)/i
+  when /(^sv\.|panny marie|křtitele)/i
     Cycle::SANCTORALE
   else
     Cycle::TEMPORALE

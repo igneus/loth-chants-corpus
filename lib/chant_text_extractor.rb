@@ -30,14 +30,14 @@ class ChantTextExtractor
   end
 
   def self.process(file, untranslations)
+    content = File.read file
+    doc = Nokogiri::HTML(content)
+
     basename = File.basename(file)
-    year = File.basename(File.dirname(file)).to_i.to_s
+    year = doc.xpath('//h2[1]').first.text.match(/(\d{4})/) {|m| m[1] }
     month = basename[2..3]
     day = basename[4..5]
     date = [year, month, day].join '-'
-
-    content = File.read file
-    doc = Nokogiri::HTML(content)
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka|připomínku/ }

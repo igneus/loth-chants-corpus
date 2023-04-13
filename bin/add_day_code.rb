@@ -1,17 +1,18 @@
 #!/usr/bin/env ruby
 
 require_relative '../lib/add_columns'
+require_relative '../lib/constants'
 
 # day_code should be a language-agnostic code of the liturgical occasion
 AddColumns
   .new
   .column('day_code') do |row|
   case row['cycle']
-  when 'temporale'
+  when Cycle::TEMPORALE
     nil # TODO
-  when 'sanctorale'
+  when Cycle::SANCTORALE
     ['sanctorale', row['month'], row['day']].join '.'
-  when 'psalter'
+  when Cycle::PSALTER
     ['psalter', row['psalter_week'], 'TODO:weekday'].join '.' # TODO
   else
     STDERR.puts row.inspect

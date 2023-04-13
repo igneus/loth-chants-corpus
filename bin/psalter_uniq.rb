@@ -3,11 +3,13 @@
 require 'set'
 
 require_relative '../lib/filter_rows'
+require_relative '../lib/add_columns'
+require_relative '../lib/constants'
 
 class PsalterUniq < FilterRows
   def initialize
     super do |row|
-      row['cycle'] != 'psalter' ||
+      row['cycle'] != Cycle::PSALTER ||
         unseen?(row)
     end
 

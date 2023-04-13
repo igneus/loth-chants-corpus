@@ -3,6 +3,7 @@
 require 'set'
 
 require_relative '../lib/filter_rows'
+require_relative '../lib/constants'
 
 class DropFalseFlagPsalterChants < FilterRows
   def initialize(psalter_csv)
@@ -17,7 +18,7 @@ class DropFalseFlagPsalterChants < FilterRows
   end
 
   def is_false_flag_psalter_chant?(row)
-    row['cycle'] != 'psalter' &&
+    row['cycle'] != Cycle::PSALTER &&
       @psalter_chants.include?(psalter_chant_properties(row))
   end
 

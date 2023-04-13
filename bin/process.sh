@@ -19,7 +19,7 @@ bin/csvfilter.rb -e 'day_title !~ /\(v.+?diecézi\)/' |
     bin/psalter_clean.rb |
     bin/psalter_uniq.rb > $tmpfile
 
-bin/csvfilter.rb -e 'cycle == "psalter"' $tmpfile > $psalter_csv
+bin/csvfilter.rb -e 'cycle == Cycle::PSALTER' $tmpfile > $psalter_csv
 
 cat $tmpfile |
 

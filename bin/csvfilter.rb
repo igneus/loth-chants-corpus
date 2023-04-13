@@ -5,6 +5,7 @@
 require 'optparse'
 
 require_relative '../lib/filter_rows'
+require_relative '../lib/constants'
 
 expressions = []
 OptionParser.new do |opts|

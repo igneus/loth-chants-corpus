@@ -10,6 +10,7 @@ class ChantTextExtractor
 
     puts CSV.generate_line([
       'basename',
+      'date',
       'month',
       'day',
       'day_title',
@@ -28,8 +29,10 @@ class ChantTextExtractor
 
   def self.process(file, untranslations)
     basename = File.basename(file)
+    year = File.basename(File.dirname(file)).to_i.to_s
     month = basename[2..3]
     day = basename[4..5]
+    date = [year, month, day].join '-'
 
     content = File.read file
     doc = Nokogiri::HTML(content)
@@ -70,6 +73,7 @@ class ChantTextExtractor
 
     file_cols = [
       basename,
+      date,
       month,
       day,
       day_title,

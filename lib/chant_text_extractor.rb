@@ -40,7 +40,7 @@ class ChantTextExtractor
     doc = Nokogiri::HTML(content)
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
-    is_rank = lambda {|x| x =~ /slavnost|svátek|památka/ }
+    is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka/ }
     day_title = day_parts.reject(&is_rank).join(';; ')
     hour = doc.css('p.center span.uppercase').first.text
     rank = day_parts.find(&is_rank)

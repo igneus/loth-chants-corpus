@@ -17,10 +17,14 @@ class PsalterUniq < FilterRows
   end
 
   def unseen?(row)
-    row_a = row.to_a
+    row_a = psalter_chant_properties row
     r = !@seen.include?(row_a)
     @seen << row_a
     r
+  end
+
+  def psalter_chant_properties(row)
+    %w(hour genre position text).collect {|i| row[i] }
   end
 end
 

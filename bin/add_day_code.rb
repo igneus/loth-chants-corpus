@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 
 require_relative '../lib/add_columns'
 require_relative '../lib/constants'
@@ -7,6 +8,8 @@ require_relative '../lib/constants'
 AddColumns
   .new
   .column('day_code') do |row|
+  next 'saturday_memorial' if row['day_title'] =~ /sobotní památka/i
+
   case row['cycle']
   when Cycle::TEMPORALE
     nil # TODO

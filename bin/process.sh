@@ -17,7 +17,8 @@ bin/csvfilter.rb -e 'day_title !~ /\(v.+?diecézi\)/' |
 
     # keep only one occurrence of each psalter chant
     bin/psalter_clean.rb |
-    bin/psalter_uniq.rb > $tmpfile
+    bin/psalter_uniq.rb |
+    bin/saturday_memorial_uniq.rb > $tmpfile
 
 bin/csvfilter.rb -e 'cycle == Cycle::PSALTER' $tmpfile > $psalter_csv
 

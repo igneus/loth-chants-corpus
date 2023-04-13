@@ -16,7 +16,7 @@ class PsalterUniq < FilterRows
 
   def unseen?(row)
     row_a = row.to_a
-    r = @seen.include? row_a
+    r = !@seen.include?(row_a)
     @seen << row_a
     r
   end

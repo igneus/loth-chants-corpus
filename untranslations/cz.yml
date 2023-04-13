@@ -12,3 +12,9 @@ hours:
   Kompletář: C
   Kompletář po prvních nešporách: C
   Kompletář po druhých nešporách: C
+ranks:
+  slavnost: S
+  svátek: F
+  památka: M
+  nezávazná památka: Mopt
+  pro připomínku: C

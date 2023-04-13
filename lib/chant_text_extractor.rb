@@ -4,6 +4,8 @@ require 'yaml'
 
 require 'nokogiri'
 
+require_relative '../lib/constants'
+
 class ChantTextExtractor
   def self.call(dir)
     untranslations = YAML.load File.read "untranslations/#{File.basename(dir)}.yml"
@@ -57,8 +59,8 @@ class ChantTextExtractor
         .uniq {|i| i.last }
         .collect do |i|
       [
-        'A',
-        i[0].then {|label| strip_nbsp.(label) =~ /k(e kantiku)? (Panny Marie|Zachariášovu)/ ? 'E' : label.scan(/\d/)[0] },
+        Genre::ANTIPHON,
+        i[0].then {|label| strip_nbsp.(label) =~ /k(e kantiku)? (Panny Marie|Zachariášovu)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
         strip_nbsp.(i[1])
       ]
     end
@@ -69,7 +71,7 @@ class ChantTextExtractor
         .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
         .collect {|i| i.xpath("./p[@class='respV']") }
         .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
-        .collect {|i| ['Rb', nil, strip_nbsp.(i)] }
+        .collect {|i| [Genre::RESPONSORY_SHORT, nil, strip_nbsp.(i)] }
 
     file_cols = [
       basename,

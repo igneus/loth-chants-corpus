@@ -16,7 +16,7 @@ AddColumns
     else
       'psalter'
     end
-  when /^sv\./i
+  when /(^sv\.|panny marie)/i
     'sanctorale'
   else
     'temporale'

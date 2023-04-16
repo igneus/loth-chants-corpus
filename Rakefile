@@ -2,7 +2,7 @@ require 'date'
 require 'fileutils'
 
 VERSIONS = %w(cz) # %w(cz czop la)
-INPUT_DIR = 'input'
+INPUT_DIR = 'input/pregenerated_prayers'
 YEAR = Date.today.year
 
 desc 'fetch and unpack pre-generated breviar.sk output packages used here as input'

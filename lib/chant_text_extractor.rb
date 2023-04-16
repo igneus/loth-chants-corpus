@@ -7,23 +7,29 @@ require 'nokogiri'
 require_relative '../lib/constants'
 
 class ChantTextExtractor
-  def self.call(dir)
-    untranslations = YAML.load File.read "untranslations/#{File.basename(dir)}.yml"
+  MONTHS = %w(jan feb mar apr maj jun jul aug sep okt nov dec).freeze
+
+  def self.call(dir, lang)
+    untranslations = YAML.load File.read "untranslations/#{lang}.yml"
 
     puts CSV.generate_line([
       'basename',
-      'date',
       'month',
       'day',
       'day_title',
       'rank',
       'hour',
+      'cycle',
+      'psalter_week',
+      'season',
       'genre',
       'position',
-      'text'
+      'text',
     ])
 
-    Dir["#{dir}/*/*_*.htm"].each do |f|
+    Dir["#{dir}/*.htm"]
+      .reject {|f| File.basename(f).start_with? 'pro_' } # propers of religious institutes
+      .each do |f|
       next if f.include? '/docs/'
       process f, untranslations
     end
@@ -34,33 +40,54 @@ class ChantTextExtractor
     doc = Nokogiri::HTML(content)
 
     basename = File.basename(file)
-    year = doc.xpath('//h2[1]').first.text.match(/(\d{4})/) {|m| m[1] }
-    month = basename[2..3]
-    day = basename[4..5]
-    date = [year, month, day].join '-'
+    month = basename.match(/^sv_(.+?)\.htm/) {|m| MONTHS.index(m[1]) + 1 }&.to_s
+    day = nil # TODO
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka|připomínku/ }
     day_title = day_parts.reject(&is_rank).join(';; ')
-    hour = doc.css('p.center span.uppercase').first.text
+    #hour = doc.css('p.center span.uppercase').first.text
+    hour = nil
     rank = day_parts.find(&is_rank)
+    cycle =
+      case basename
+      when /^_/
+        Cycle::PSALTER
+      when /s[vc]_/
+        Cycle::SANCTORALE
+      else
+        Cycle::TEMPORALE
+      end
+    psalter_week = basename.match(/^_(\d)/) {|m| m[1] }
+    season =
+      case basename
+      when /adv/
+        Season::ADVENT
+      when /post/
+        Season::LENT
+      when /cezrok/
+        Season::ORDINARY
+      else
+        nil
+      end
 
     chants = []
 
     # Nokogiri translates &nbsp; to a Unicode non-breaking space, which we do not like
-    strip_nbsp = -> (x) { x&.gsub("\u00A0", ' ') }
+    strip_nbsp = -> (x) { x&.gsub("_", ' ') }
 
     # antiphons
     chants +=
       doc
         .xpath("//p[./span[@class='red']]")
         .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
-        .collect {|i| i.children.collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
+        #.tap {|x| pp x }
+        .collect {|i| i.children.reject(&:comment?).collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
         .uniq {|i| i.last }
         .collect do |i|
       [
         Genre::ANTIPHON,
-        i[0].then {|label| strip_nbsp.(label) =~ /k(e kantiku)? (Panny Marie|Zachariášovu)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
+        i[0].then {|label| label =~ /(ke kant\. P\. M\.|k_Zach\. kant\.)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
         strip_nbsp.(i[1])
       ]
     end
@@ -75,12 +102,14 @@ class ChantTextExtractor
 
     file_cols = [
       basename,
-      date,
       month,
       day,
       day_title,
       untranslations['ranks'][rank] || rank,
       untranslations['hours'][hour] || hour,
+      cycle,
+      psalter_week,
+      season,
     ].collect do |s|
       # mainly remove line-breaks in feast titles
       s&.gsub(/\s+/, ' ')

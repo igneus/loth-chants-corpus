@@ -4,8 +4,10 @@
 
 require_relative '../lib/chant_text_extractor'
 
+lang, dir = ARGV
+
 begin
-  ARGV.each {|dir| ChantTextExtractor.call dir }
+  ChantTextExtractor.call dir, lang
 rescue Errno::EPIPE
   # ok, no more output, exit
 end

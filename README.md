@@ -10,6 +10,7 @@ but the scripts provide a reproducible way of building it from publicly availabl
 ## Prerequisites
 
 - Ruby 3.x, Bundler
+- wget
 - [csvkit](https://github.com/wireservice/csvkit)
 
 ## Usage

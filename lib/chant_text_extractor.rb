@@ -46,8 +46,6 @@ class ChantTextExtractor
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka|připomínku/ }
     day_title = day_parts.reject(&is_rank).join(';; ')
-    #hour = doc.css('p.center span.uppercase').first.text
-    hour = nil
     rank = day_parts.find(&is_rank)
     cycle =
       case basename
@@ -76,29 +74,42 @@ class ChantTextExtractor
     # Nokogiri translates &nbsp; to a Unicode non-breaking space, which we do not like
     strip_nbsp = -> (x) { x&.gsub("_", ' ') }
 
-    # antiphons
-    chants +=
-      doc
-        .xpath("//p[./span[@class='red']]")
-        .select {|i| fc = i.children.first; fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
-        #.tap {|x| pp x }
-        .collect {|i| i.children.reject(&:comment?).collect {|y| y.text.strip }.reject(&:empty?)[0..1] }
-        .uniq {|i| i.last }
-        .collect do |i|
-      [
-        Genre::ANTIPHON,
-        i[0].then {|label| label =~ /(ke kant\. P\. M\.|k_Zach\. kant\.)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
-        strip_nbsp.(i[1])
-      ]
-    end
+    hour = nil
+    doc
+      .xpath('/html/body/*')
+      .each do |para|
+      # possible hour title
+      # (hour titles are sometimes HTML elements, sometimes text nodes, only text matters)
+      new_hour = untranslations['hours'][para.text.strip.downcase]
+      if new_hour
+        hour = new_hour
+        next
+      end
 
-    # short responsories
-    chants +=
-      doc
-        .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
-        .collect {|i| i.xpath("./p[@class='respV']") }
-        .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
-        .collect {|i| [Genre::RESPONSORY_SHORT, nil, strip_nbsp.(i)] }
+      next unless para.element? && para.name == 'p'
+
+      # antiphon
+      if para.xpath("./span[@class='red']") &&
+         para.children.first&.then {|fc| fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
+        i = para.children.reject(&:comment?).collect {|y| y.text.strip }.reject(&:empty?)[0..1]
+        chants << [
+          Genre::ANTIPHON,
+          i[0].then {|label| label =~ /(ke kant\. P\. M\.|k_Zach\. kant\.)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
+          strip_nbsp.(i[1])
+        ]
+        next
+      end
+
+      # short responsory
+      if false # TODO
+        # TODO rearrange old code
+        doc
+          .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
+          .collect {|i| i.xpath("./p[@class='respV']") }
+          .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
+          .collect {|i| [Genre::RESPONSORY_SHORT, nil, strip_nbsp.(i)] }
+      end
+    end
 
     file_cols = [
       basename,
@@ -106,7 +117,7 @@ class ChantTextExtractor
       day,
       day_title,
       untranslations['ranks'][rank] || rank,
-      untranslations['hours'][hour] || hour,
+      hour,
       cycle,
       psalter_week,
       season,

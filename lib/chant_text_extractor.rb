@@ -41,7 +41,7 @@ class ChantTextExtractor
 
     basename = File.basename(file)
     month = basename.match(/^sv_(.+?)\.htm/) {|m| MONTHS.index(m[1]) + 1 }&.to_s
-    day = nil # TODO
+    day = nil
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka|připomínku/ }
@@ -87,6 +87,13 @@ class ChantTextExtractor
       end
 
       next unless para.element? && para.name == 'p'
+
+      # sanctorale, day title
+      if basename.start_with?('sv_') && para[:class] == 'center strong' && para.text.strip =~ /^(Též\s+)?(\d+)\.\s+(ledna|února|března|dubna|května|června|července|srpna|září|října|listopadu|prosince)$/
+        day = $2.to_s
+        day_title = para.xpath("./following-sibling::p[@class='strong'][1]").text.strip
+        next
+      end
 
       # antiphon
       if para.xpath("./span[@class='red']") &&

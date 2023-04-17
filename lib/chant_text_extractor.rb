@@ -73,7 +73,6 @@ class ChantTextExtractor
 
     chants = []
 
-    # Nokogiri translates &nbsp; to a Unicode non-breaking space, which we do not like
     strip_nbsp = -> (x) { x&.gsub("_", ' ') }
 
     hour = nil

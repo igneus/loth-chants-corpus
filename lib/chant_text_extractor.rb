@@ -101,13 +101,17 @@ class ChantTextExtractor
       end
 
       # short responsory
-      if false # TODO
-        # TODO rearrange old code
-        doc
-          .xpath("//div[@class='respons' and count(./p[@class='respV']) > 2]")
-          .collect {|i| i.xpath("./p[@class='respV']") }
-          .collect {|j| j[0].text.strip + ' V. ' + j[1].text.strip }
-          .collect {|i| [Genre::RESPONSORY_SHORT, nil, strip_nbsp.(i)] }
+      if para[:class] == 'redsmall' && para.text.strip.downcase == 'zpěv po krátkém čtení'
+        # two subsequent p.respV siblings are interesting for us
+        chants << [
+          Genre::RESPONSORY_SHORT,
+          nil,
+          strip_nbsp.(
+            para.xpath("./following-sibling::p[@class='respV'][1]").text.strip.gsub('{*}', '*') +
+            ' V. ' +
+            para.xpath("./following-sibling::p[@class='respV'][2]").text.strip
+          )
+        ]
       end
     end
 

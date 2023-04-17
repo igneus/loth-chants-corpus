@@ -92,10 +92,12 @@ class ChantTextExtractor
       if para.xpath("./span[@class='red']") &&
          para.children.first&.then {|fc| fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
         i = para.children.reject(&:comment?).collect {|y| y.text.strip }.reject(&:empty?)[0..1]
+        text = strip_nbsp.(i[1])
+        next if chants&.last&.last == text # repetition of the antiphon after the psalm
         chants << [
           Genre::ANTIPHON,
           i[0].then {|label| label =~ /(ke kant\. P\. M\.|k_Zach\. kant\.)/ ? Position::GOSPEL_ANTIPHON : label.scan(/\d/)[0] },
-          strip_nbsp.(i[1])
+          text
         ]
         next
       end

@@ -22,6 +22,7 @@ class ChantTextExtractor
       'cycle',
       'psalter_week',
       'season',
+      'day_code',
       'genre',
       'position',
       'text',
@@ -42,6 +43,7 @@ class ChantTextExtractor
     basename = File.basename(file)
     month = basename.match(/^sv_(.+?)\.htm/) {|m| MONTHS.index(m[1]) + 1 }&.to_s
     day = nil
+    day_code = nil
 
     day_parts = doc.xpath('//h2[2]/span').collect(&:text)
     is_rank = lambda {|x| x =~ /slavnost|svátek|(?<!Sobotní )památka|připomínku/ }
@@ -95,6 +97,26 @@ class ChantTextExtractor
         next
       end
 
+      day_code =
+        case cycle
+        when Cycle::TEMPORALE
+          nil # TODO
+        when Cycle::SANCTORALE
+          if basename =~ /^sc_(.+?)\.htm$/
+            "commune.#{$1}" # TODO translate Slovak->English
+          else
+            ['sanctorale', month, day]
+          end
+        when Cycle::PSALTER
+          [
+            'psalter',
+            psalter_week,
+            basename.match(/^_\d(.+?)\.htm$/) {|m| m[1] } # TODO translate Slovak->English
+          ].join '.'
+        else
+          raise "unexpected cycle #{row['cycle']}"
+        end
+
       # antiphon
       if para.xpath("./span[@class='red']") &&
          para.children.first&.then {|fc| fc.name == 'span' && fc.text =~ /ant(\.|ifona k)/i }
@@ -134,6 +156,7 @@ class ChantTextExtractor
       cycle,
       psalter_week,
       season,
+      day_code,
     ].collect do |s|
       # mainly remove line-breaks in feast titles
       s&.gsub(/\s+/, ' ')

@@ -6,8 +6,6 @@
 # drop diocese-specific feasts (not interesting for us, as they have no unique chant texts)
 bin/csvfilter.rb -e 'day_title !~ /\(v.+?diecézi\)/' |
 
-    bin/add_day_code.rb |
-
     # drop first column (filename)
     csvcut --not-columns basename |
 

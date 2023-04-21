@@ -22,13 +22,9 @@ but the scripts provide a reproducible way of building it from publicly availabl
 
 ## TODO
 
-- extract responsories
-- extract Benedictus/Magnificat antiphons
-- column distinguishing temporale/sanctorale/psalter
-- liturgical season column
-- celebration rank column
-- expunge repeated occurrences of chants from the Psalter and the Commons; correctly annotate them as such
+- extract OoR responsories
 - extract Benedictus/Magnificat antiphons for all three lectionary cycles
-- system for matching entries from different language versions
+- scrape also the Latin and Czech Dominican version
+- collate matching entries from different language versions
 
 [breviarsk]: https://breviar.sk/
